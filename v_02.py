@@ -12,7 +12,7 @@ def check_folder(new_path, our_folder):
             new_folder = new_folder + filename
             os.makedirs(new_folder)
             full_path = os.path.abspath(filename)
-            t1 = Thread(target=check_folder, args = (full_path, new_folder))
+            t1 = Thread(target=check_folder, args = (full_path, new_folder,))
             t1.start()
             t1.join()
             continue
