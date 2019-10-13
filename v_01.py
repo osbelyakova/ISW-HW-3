@@ -2,7 +2,7 @@ import numpy as np
 import librosa
 import os
 import time
-NULL_PATH = "id00012"
+NULL_PATH = "vox2_dev_aacab"
 def check_folder(new_path, our_folder):
     for filename in os.listdir(new_path):
         os.chdir(new_path)
