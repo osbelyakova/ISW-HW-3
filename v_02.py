@@ -25,7 +25,7 @@ def check_folder(new_path, our_folder):
             x , sr = librosa.load(os.path.abspath(filename))
             mfcc = librosa.feature.mfcc(x, sr)
             new_folder = our_folder + '\\'
-            new_folder = new_folder + filename
+            new_folder = new_folder + filename[0:filename.rfind("."):]
             np.save(new_folder, mfcc)
 start_time = time.time()
 os.chdir('C:\\Users\\osbel\\Desktop')
