@@ -3,33 +3,28 @@ import librosa
 import os
 import time
 from threading import Thread
+"""Take MFCC and put it in the catalog"""
 NULL_PATH = "id00012"
 def check_folder(new_path, our_folder):
+    """Looking for a 'm4a' file and build the catalog tree"""
+    threads = []
     for filename in os.listdir(new_path):
-        os.chdir(new_path)
-        if os.path.isdir(os.path.abspath(filename)):
-            new_folder = our_folder + '\\'
-            new_folder = new_folder + filename
-            os.makedirs(new_folder)
-            full_path = os.path.abspath(filename)
-            t1 = Thread(target=check_folder, args = (full_path, new_folder,))
-            t1.start()
-            t1.join()
+        if filename[filename.rfind(".") + 1:] == 'm4a':
+            y, sr = librosa.load(new_path + '\\' + filename)
+            mfcc = librosa.feature.mfcc(y, sr)
+            np.save(our_folder + '\\' + filename[0:filename.rfind("."):], mfcc)
+        else:
+            os.makedirs(our_folder + '\\' + filename)
+            t1 = Thread(target=check_folder, args=(new_path + '\\' + filename, our_folder + '\\' + filename,))
+            threads.append(t1)
             continue
-        ext = filename[filename.rfind(".") + 1:]
-        if ext == 'm4a':
-            os.rename(filename, filename[0:filename.rfind(".") + 1:] + 'ogg')
-            filename = filename[0:filename.rfind(".") + 1:] + 'ogg'
-            ext = 'ogg'
-        if ext == 'ogg':
-            x , sr = librosa.load(os.path.abspath(filename))
-            mfcc = librosa.feature.mfcc(x, sr)
-            new_folder = our_folder + '\\'
-            new_folder = new_folder + filename[0:filename.rfind("."):]
-            np.save(new_folder, mfcc)
+    for t1 in threads:
+        t1.start()
+    for t1 in threads:
+        t1.join()
 start_time = time.time()
-os.chdir('C:\\Users\\osbel\\Desktop')
-answer = os.getcwd() + '\\test'
-os.mkdir(answer)
-check_folder(os.path.abspath(NULL_PATH), answer)
+#os.chdir('C:\\Users\\osbel\\Desktop')
+answer_path = os.getcwd() + '\\with_MFCC'
+os.mkdir(answer_path)
+check_folder(os.path.abspath(NULL_PATH), answer_path)
 print("Time: {}".format(time.time() - start_time))
