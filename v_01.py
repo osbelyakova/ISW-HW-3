@@ -2,31 +2,22 @@ import numpy as np
 import librosa
 import os
 import time
-NULL_PATH = "vox2_dev_aacab"
+"""Take MFCC and put it in the catalog"""
+NULL_PATH = "id00012"
 def check_folder(new_path, our_folder):
+    """Looking for a 'm4a' file and build the catalog tree"""
     for filename in os.listdir(new_path):
-        os.chdir(new_path)
-        if os.path.isdir(os.path.abspath(filename)):
-            new_folder = our_folder + '\\'
-            new_folder = new_folder + filename
-            os.makedirs(new_folder)
-            full_path = os.path.abspath(filename)
-            check_folder(full_path, new_folder)
-            continue
-        ext = filename[filename.rfind(".") + 1:]
-        if ext == 'm4a':
-            os.rename(filename, filename[0:filename.rfind(".") + 1:] + 'ogg')
-            filename = filename[0:filename.rfind(".") + 1:] + 'ogg'
-            ext = 'ogg'
-        if ext == 'ogg':
-            x , sr = librosa.load(os.path.abspath(filename))
+        if filename[filename.rfind(".") + 1:] == 'm4a':
+            x, sr = librosa.load(new_path + '\\' + filename)
             mfcc = librosa.feature.mfcc(x, sr)
-            new_folder = our_folder + '\\'
-            new_folder = new_folder + filename[0:filename.rfind("."):]
-            np.save(new_folder, mfcc)
+            np.save(our_folder + '\\' + filename[0:filename.rfind("."):], mfcc)
+        else:
+            os.makedirs(our_folder + '\\' + filename)
+            check_folder(new_path + '\\' + filename, our_folder + '\\' + filename)
+            continue
 start_time = time.time()
 #os.chdir('C:\\Users\\osbel\\Desktop')
-answer = os.getcwd() + '\\test'
-os.mkdir(answer)
-check_folder(os.path.abspath(NULL_PATH), answer)
+answer_path = os.getcwd() + '\\with_MFCC'
+os.mkdir(answer_path)
+check_folder(os.path.abspath(NULL_PATH), answer_path)
 print("Time: {}".format(time.time() - start_time))
