@@ -15,7 +15,7 @@ def check_folder(new_path, our_folder):
             np.save(full_path, mfcc)
         else:
             full_path_1 = os.path.join(our_folder, filename)
-            os.makedirs(full_path)
+            os.makedirs(full_path_1)
             full_path_2 = os.path.join(new_path, filename)
             check_folder(full_path_2, full_path_1)
             continue
