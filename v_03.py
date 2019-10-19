@@ -1,34 +1,32 @@
+#!/usr/bin/env python3
+import warnings
+warnings.filterwarnings('ignore')
 import numpy as np
 import librosa
 import os
 import time
 from multiprocessing import Process
 """Take MFCC and put it in the catalog"""
-NULL_PATH = "id05714"
+NULL_PATH = "vox2_test_mp4"
 def make_mfcc(new_path, our_folder):
-    full_path = os.path.join(new_path, filename)
-    x, sr = librosa.load(full_path)
+    """Save as numpy array"""
+    x, sr = librosa.load(new_path)
     mfcc = librosa.feature.mfcc(x, sr)
-    full_path = os.path.join(our_folder, filename[0:filename.rfind("."):])
-    np.save(full_path, mfcc)   
+    np.save(our_folder, mfcc)
     
 if __name__=='__main__':
     def check_folder(new_path, our_folder):
-        """Looking for a 'm4a' file and build the catalog tree"""
+        """Looking for a 'mp4' file and build the catalog tree"""
         procs = []
         for filename in os.listdir(new_path):
-            if filename[filename.rfind(".") + 1:] == 'm4a':
-                full_path = os.path.join(new_path, filename)
-                x, sr = librosa.load(full_path)
-                mfcc = librosa.feature.mfcc(x, sr)
-                full_path = os.path.join(our_folder, filename[0:filename.rfind("."):])
-                np.save(full_path, mfcc)
-            else:
-                full_path_1 = os.path.join(our_folder, filename)
-                os.makedirs(full_path_1)
-                full_path_2 = os.path.join(new_path, filename)
+            full_path_2 = os.path.join(new_path, filename)
+            full_path_1 = os.path.join(our_folder, filename)
+            if filename[filename.rfind("."):] == '.mp4':
                 p = Process(target=make_mfcc, args=(full_path_2, full_path_1,))
-                procs.append(t1)
+                procs.append(p)
+            else:
+                os.makedirs(full_path_1)
+                check_folder(full_path_2, full_path_1)
                 continue
         for p in procs:
             p.start()
