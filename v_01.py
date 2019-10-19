@@ -1,13 +1,16 @@
+#!/usr/bin/env python3
+import warnings
+warnings.filterwarnings('ignore')
 import numpy as np
 import librosa
 import os
 import time
 """Take MFCC and put it in the catalog"""
-NULL_PATH = "id00012"
+NULL_PATH = "vox2_test_mp4"
 def check_folder(new_path, our_folder):
-    """Looking for a 'm4a' file and build the catalog tree"""
+    """Looking for a 'mp4' file and build the catalog tree"""
     for filename in os.listdir(new_path):
-        if filename[filename.rfind(".") + 1:] == 'm4a':
+        if filename[filename.rfind("."):] == '.mp4':
             full_path = os.path.join(new_path, filename)
             x, sr = librosa.load(full_path)
             mfcc = librosa.feature.mfcc(x, sr)
